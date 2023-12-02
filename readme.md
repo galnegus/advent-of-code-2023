@@ -24,6 +24,6 @@ npm install -g ts-node typescript '@types/node'
 ## Usage/Examples
 
 ```shell
-ts-node day-1-trebuchet
+ts-node day-01-trebuchet
 ```
 
