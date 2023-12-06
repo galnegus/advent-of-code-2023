@@ -17,7 +17,7 @@ const recordInput = [...input[1].matchAll(/\d+/g)].map(Number);
 const races: Array<Race> = timesInput.map((time, i) => ({ time, record: recordInput[i] }));
 
 /**
- * Distance traveled x is `(time - x) * x = time * x - x^2`.
+ * Distance traveled is given by `(time - x) * x = time * x - x^2` (where x is how long button was held).
  * Points that would achieve record distance are thus given by `time * x - x^2 = record`
  * Complete the square etc... and you get:
  * ```
