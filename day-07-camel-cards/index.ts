@@ -80,7 +80,7 @@ interface Bid {
   amount: number;
 }
 
-const inputHands = rawInput
+const bids = rawInput
   .split(/\r?\n/)
   .filter(Boolean)
   .map<Bid>((line) => {
@@ -93,14 +93,14 @@ const inputHands = rawInput
 
 console.log(
   "Part 1:",
-  inputHands
+  bids
     .toSorted((a, b) => compareHands(a.hand, b.hand))
     .reduce((sum, bid, i) => sum + bid.amount * (i + 1), 0)
 );
 
 console.log(
   "Part 2:",
-  inputHands
+  bids
     .toSorted((a, b) => compareHands(a.hand, b.hand, true))
     .reduce((sum, bid, i) => sum + bid.amount * (i + 1), 0)
 );
