@@ -1,5 +1,11 @@
 console.time("Execution time");
 
+const testInput = false;
+const rawInput: string = require("fs").readFileSync(
+  require("path").resolve(__dirname, testInput ? "test" : "input"),
+  "utf-8"
+);
+
 const cards = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"] as const;
 const cardStrength = new Map(cards.map((card, i) => [card, cards.length - i]));
 type Card = (typeof cards)[number];
@@ -49,16 +55,12 @@ function getHandType(hand: Array<Card>, jokerMode = false): HandType {
   const jokerCandidates = [...cardCount.entries()]
     .filter(([card]) => card !== "J")
     .map(([_, count]) => count)
-    .filter(Boolean);
-  const possibleHandTypes = jokerCandidates
-    .map((_, i) =>
-      [...jokerCandidates]
-        .map((count, j) => count + (i === j ? jokers : 0))
-        .sort((a, b) => b - a)
-        .toString()
-    )
-    .filter(isHandType);
-  return possibleHandTypes.sort((a, b) => getHandTypeStrength(b) - getHandTypeStrength(a))[0];
+    .filter(Boolean)
+    .sort((a, b) => b - a);
+  const handType = [jokerCandidates[0] + jokers, ...jokerCandidates.slice(1)].toString();
+  if (!isHandType(handType))
+    throw new Error(`Something terrible must've happened to the input, handType: ${handType}`);
+  return handType;
 }
 
 function compareHands(a: Array<Card>, b: Array<Card>, jokerMode = false): number {
@@ -75,12 +77,6 @@ function compareHands(a: Array<Card>, b: Array<Card>, jokerMode = false): number
   }
   throw new Error("a and b are somehow equal, this should never happen!");
 }
-
-const testInput = false;
-const rawInput: string = require("fs").readFileSync(
-  require("path").resolve(__dirname, testInput ? "test" : "input"),
-  "utf-8"
-);
 
 interface Bid {
   hand: Array<Card>;
