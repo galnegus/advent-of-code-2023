@@ -40,24 +40,21 @@ function getHandType(hand: Array<Card>, jokerMode = false): HandType {
     cardCount.set(card, (cardCount.get(card) ?? 0) + 1);
   }
 
+  let handType;
   const jokers = cardCount.get("J") ?? 0;
-  if (!jokerMode || jokers === 0) {
-    const handType = [...cardCount.values()]
+  if (jokerMode && jokers !== 0) {
+    const jokerlessCardCounts = [...cardCount.entries()]
+      .filter(([card]) => card !== "J")
+      .map(([_, count]) => count)
+      .filter(Boolean)
+      .sort((a, b) => b - a);
+    handType = [(jokerlessCardCounts[0] ?? 0) + jokers, ...jokerlessCardCounts.slice(1)].toString();
+  } else {
+    handType = [...cardCount.values()]
       .filter(Boolean)
       .sort((a, b) => b - a)
       .toString();
-    if (!isHandType(handType))
-      throw new Error(`Something terrible must've happened to the input, handType: ${handType}`);
-    return handType;
   }
-
-  if (jokers === 5) return "5";
-  const jokerCandidates = [...cardCount.entries()]
-    .filter(([card]) => card !== "J")
-    .map(([_, count]) => count)
-    .filter(Boolean)
-    .sort((a, b) => b - a);
-  const handType = [jokerCandidates[0] + jokers, ...jokerCandidates.slice(1)].toString();
   if (!isHandType(handType))
     throw new Error(`Something terrible must've happened to the input, handType: ${handType}`);
   return handType;
