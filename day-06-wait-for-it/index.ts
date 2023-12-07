@@ -2,7 +2,7 @@ console.time("Execution time");
 
 const testInput = false;
 const rawInput: string = require("fs").readFileSync(
-  require("path").resolve(__dirname, testInput ? "test.txt" : "input.txt"),
+  require("path").resolve(__dirname, testInput ? "test" : "input"),
   "utf-8"
 );
 
