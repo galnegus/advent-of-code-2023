@@ -5,64 +5,58 @@ const rawInput: string = require("fs").readFileSync(
   require("path").resolve(__dirname, testInput ? "test" : "input"),
   "utf-8"
 );
-const input = rawInput.split(/\r?\n/).filter(Boolean);
+
+type Tile = "." | "#";
+const input = rawInput
+  .split(/\r?\n/)
+  .filter(Boolean)
+  .map((line) => line.split(""))
+  .filter((line): line is Array<Tile> => line.every((symbol) => symbol === "." || symbol === "#"));
+const rowIndices = new Array(input.length).fill(undefined).map((_, i) => i);
+const colIndices = new Array(input[0].length).fill(undefined).map((_, i) => i);
 
 interface Position {
   row: number;
   col: number;
 }
+let cumSum = 0;
+const galaxylessRowsCumSum = rowIndices
+  .map((row) => (input[row].every((symbol) => symbol === ".") ? 1 : 0))
+  .map(((cumSum = 0), (n) => (cumSum += n)));
+const galaxylessColsCumSum = colIndices
+  .map((col) => 1 - rowIndices.reduce((found, row) => +(found || input[row][col] === "#"), 0))
+  .map(((cumSum = 0), (n) => (cumSum += n)));
+const galaxies: Array<Position> = rowIndices
+  .map((row) =>
+    colIndices
+      .map<Position | null>((col) => (input[row][col] === "#" ? { row, col } : null))
+      .filter<Position>((position): position is Position => position != null)
+  )
+  .flat();
 
-const rowHasNoGalaxy: Set<number> = new Set(
-  new Array(input.length).fill(undefined).map((_, i) => i)
-);
-const colHasNoGalaxy: Set<number> = new Set(
-  new Array(input[0].length).fill(undefined).map((_, i) => i)
-);
-const galaxies: Array<Position> = [];
-
-for (let row = 0; row < input.length; ++row) {
-  for (let col = 0; col < input[0].length; ++col) {
-    if (input[row][col] === "#") {
-      galaxies.push({ row, col });
-      rowHasNoGalaxy.delete(row);
-      colHasNoGalaxy.delete(col);
-    }
-  }
+function distance(a: Position, b: Position, galaxylessDistance = 1): number {
+  const rowDistance =
+    Math.abs(b.row - a.row) +
+    Math.abs(galaxylessRowsCumSum[b.row] - galaxylessRowsCumSum[a.row]) * galaxylessDistance;
+  const colDistance =
+    Math.abs(b.col - a.col) +
+    Math.abs(galaxylessColsCumSum[b.col] - galaxylessColsCumSum[a.col]) * galaxylessDistance;
+  return rowDistance + colDistance;
 }
-
-function rowDistance(a: number, b: number, emptyGalaxyDistance = 1): number {
-  let distance = Math.abs(b - a);
-  for (let i = Math.min(a, b); i <= Math.max(a, b); ++i) {
-    if (rowHasNoGalaxy.has(i)) distance += emptyGalaxyDistance;
-  }
-  return distance;
-}
-function colDistance(a: number, b: number, emptyGalaxyDistance = 1): number {
-  let distance = Math.abs(b - a);
-  for (let i = Math.min(a, b); i <= Math.max(a, b); ++i) {
-    if (colHasNoGalaxy.has(i)) distance += emptyGalaxyDistance;
-  }
-  return distance;
-}
-function distance(a: Position, b: Position, emptyGalaxyDistance = 1): number {
-  return (
-    rowDistance(a.row, b.row, emptyGalaxyDistance) + colDistance(a.col, b.col, emptyGalaxyDistance)
-  );
-}
-function sumOfDistances(emptyGalaxyDistance = 1): number {
+function sumOfDistances(galaxylessDistance = 1): number {
   return galaxies
     .map((galaxy, i) =>
       galaxies.reduce(
         (sum, otherGalaxy, j) =>
-          sum + (j <= i ? 0 : distance(galaxy, otherGalaxy, emptyGalaxyDistance)),
+          sum + (j <= i ? 0 : distance(galaxy, otherGalaxy, galaxylessDistance)),
         0
       )
     )
     .reduce((sum, curr) => sum + curr, 0);
 }
 
-console.log("Part 1:", sumOfDistances());
-console.log("Part 1:", sumOfDistances(100000 - 1));
+console.log("Part 1:", sumOfDistances(1));
+console.log("Part 2:", sumOfDistances(100000 - 1));
 
 console.timeEnd("Execution time");
 export {};
