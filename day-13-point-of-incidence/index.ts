@@ -77,7 +77,7 @@ function findMirror(
   );
 }
 
-function patternScore(pattern: Pattern, i: number, smudged = false): number {
+function patternScore(pattern: Pattern, smudged = false): number {
   const colMirror = findMirror(pattern.rows, pattern.colIndices, smudged);
   if (colMirror !== undefined) return colMirror + 1;
   const rowMirror = findMirror(pattern.cols, pattern.rowIndices, smudged);
@@ -87,11 +87,11 @@ function patternScore(pattern: Pattern, i: number, smudged = false): number {
 
 console.log(
   "Part 1:",
-  patterns.map((pattern, i) => patternScore(pattern, i)).reduce((sum, curr) => sum + curr, 0)
+  patterns.map((pattern) => patternScore(pattern)).reduce((sum, curr) => sum + curr, 0)
 );
 console.log(
   "Part 2:",
-  patterns.map((pattern, i) => patternScore(pattern, i, true)).reduce((sum, curr) => sum + curr, 0)
+  patterns.map((pattern) => patternScore(pattern, true)).reduce((sum, curr) => sum + curr, 0)
 );
 
 console.timeEnd("Execution time");
