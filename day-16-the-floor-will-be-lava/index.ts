@@ -81,7 +81,12 @@ function energizedTiles(startBeam: Beam): number {
   while (beams.length > 0) {
     const beam = beams.shift() as Beam;
     if (cache.check(beam)) continue;
-    if (beam.position[0] >= 0 && beam.position[0] < grid.length)
+    if (
+      beam.position[0] >= 0 &&
+      beam.position[0] < grid.length &&
+      beam.position[1] >= 0 &&
+      beam.position[1] < grid[0].length
+    )
       energizedGrid[beam.position[0]][beam.position[1]] = true;
     const nextSymbol =
       grid[beam.position[0] + beam.velocity[0]]?.[beam.position[1] + beam.velocity[1]];
