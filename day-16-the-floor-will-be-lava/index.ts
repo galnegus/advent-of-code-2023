@@ -79,7 +79,7 @@ function energizedTiles(startBeam: Beam): number {
   const beams: Array<Beam> = [startBeam];
   const cache = new VisistedCache();
   while (beams.length > 0) {
-    const beam = beams.shift() as Beam;
+    const beam = beams.pop() as Beam;
     if (cache.check(beam)) continue;
     if (
       beam.position[0] >= 0 &&
@@ -108,19 +108,19 @@ function energizedTiles(startBeam: Beam): number {
 
 console.log("Part 1:", energizedTiles({ position: [0, -1], velocity: [0, 1] }));
 
-const startBeams: Array<Beam> = [
+const startBeams = [
   new Array(grid.length)
     .fill(undefined)
-    .map((_, i) => ({ position: [-1, i], velocity: [1, 0] } satisfies Beam)),
+    .map<Beam>((_, i) => ({ position: [-1, i], velocity: [1, 0] })),
   new Array(grid.length)
     .fill(undefined)
-    .map((_, i) => ({ position: [grid.length, i], velocity: [-1, 0] } satisfies Beam)),
+    .map<Beam>((_, i) => ({ position: [grid.length, i], velocity: [-1, 0] })),
   new Array(grid[0].length)
     .fill(undefined)
-    .map((_, i) => ({ position: [i, -1], velocity: [0, 1] } satisfies Beam)),
+    .map<Beam>((_, i) => ({ position: [i, -1], velocity: [0, 1] })),
   new Array(grid[0].length)
     .fill(undefined)
-    .map((_, i) => ({ position: [i, grid[0].length], velocity: [0, -1] } satisfies Beam)),
+    .map<Beam>((_, i) => ({ position: [i, grid[0].length], velocity: [0, -1] })),
 ].flat();
 
 console.log("Part 2:", Math.max(...startBeams.map((startBeam) => energizedTiles(startBeam))));
