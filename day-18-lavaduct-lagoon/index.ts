@@ -45,10 +45,6 @@ const p2Input = rawInput
 
 class Vertex {
   constructor(public row: number, public col: number) {}
-  add(other: Vertex) {
-    this.row += other.row;
-    this.col += other.col;
-  }
   subtract(other: Vertex) {
     this.row -= other.row;
     this.col -= other.col;
