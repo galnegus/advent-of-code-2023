@@ -17,7 +17,7 @@ interface ConditionalRule {
 }
 type Rule = SingleRule | ConditionalRule;
 const isConditionalRule = (rule: Rule): rule is ConditionalRule => typeof rule === "object";
-const isRequiredPart = (rule: Partial<Part>): rule is Part => Object.keys(rule).length === 4;
+const isRequiredPart = (part: Partial<Part>): part is Part => Object.keys(part).length === 4;
 
 const rawSplit = rawInput.split(/\r?\n\r?\n/).filter(Boolean);
 const workflows = new Map<string, Array<Rule>>(
